@@ -4,7 +4,7 @@
   debug:
     msg: "User created: {{ _user_openshift_io_user.metadata.name }} -> Setting up ClusterResourceQuota"
 
-- name: Retrieve available UserQuotas
+- name: Retrieve UserQuota 'default'
   k8s_facts:
     api_version: gpte.opentlc.com/v1alpha1
     kind: UserQuota
@@ -13,31 +13,31 @@
   register:
     user_quota
 
-- name: Print some debug information 
-  vars: 
-    msg: |
-        Module Variables ("vars"):
-        --------------------------------
-        {{ vars | to_nice_json }} 
+# - name: Print some debug information 
+#   vars: 
+#     msg: |
+#         Module Variables ("vars"):
+#         --------------------------------
+#         {{ vars | to_nice_json }} 
  
-        Environment Variables ("environment"):
-        --------------------------------
-        {{ environment | to_nice_json }} 
+#         Environment Variables ("environment"):
+#         --------------------------------
+#         {{ environment | to_nice_json }} 
  
-        GROUP NAMES Variables ("group_names"):
-        --------------------------------
-        {{ group_names | to_nice_json }}
+#         GROUP NAMES Variables ("group_names"):
+#         --------------------------------
+#         {{ group_names | to_nice_json }}
  
-        GROUPS Variables ("groups"):
-        --------------------------------
-        {{ groups | to_nice_json }}
+#         GROUPS Variables ("groups"):
+#         --------------------------------
+#         {{ groups | to_nice_json }}
  
-        HOST Variables ("hostvars"):
-        --------------------------------
-        {{ hostvars | to_nice_json }} 
-  debug: 
-    msg: "{{ msg.split('\n') }}"       
-  tags: debug_info
+#         HOST Variables ("hostvars"):
+#         --------------------------------
+#         {{ hostvars | to_nice_json }} 
+#   debug: 
+#     msg: "{{ msg.split('\n') }}"       
+#   tags: debug_info
 
 # User Quota found - add it to the User
 - name: Add ClusterResourceQuota to User
@@ -71,12 +71,6 @@
         # "            },",
         # "            \"spec\": {}",
         # "        },",
-
-        # "        \"user_quota\": {",
-        # "            \"changed\": false,",
-        # "            \"failed\": false,",
-        # "            \"resources\": []",
-        # "        }",
 
         #         "        \"user_quota\": {",
         # "            \"changed\": false,",

@@ -2,12 +2,17 @@ apiVersion: quota.openshift.io/v1
 kind: ClusterResourceQuota
 metadata:
   name: "clusterquota-{{ _user_openshift_io_user.metadata.name }}"
-  labels:
-  user_quota_operator: true
+  annotations:
+    applied_userquota: "{{ user_quota.resources[0].metadata.name }}"
+  ownerReferences:
+  - apiVersion: gpte.opentlc.com/v1alpha1
+    kind: UserQuota
+    name: "{{ user_quota.resources[0].metadata.name }}"
+    uid: "{{ user_quota.resources[0].metadata.uid }}"
 spec:
-  quota:
-    "{{ user_quota.resources[0].spec.quota }}|from_yaml"
   selector:
     annotations:
       openshift.io/requester: "{{ _user_openshift_io_user.metadata.name }}"
     labels: null
+  quota:
+    {{ user_quota.resources[0].spec.quota|to_yaml }}
