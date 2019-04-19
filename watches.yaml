@@ -1,0 +1,10 @@
+---
+- version: v1alpha1
+  group: gpte.opentlc.com
+  kind: UserQuota
+  role: /opt/ansible/roles/userquota
+- version: v1
+  group: user.openshift.io
+  kind: User
+  role: /opt/ansible/roles/usercreated
+  manageStatus: false
