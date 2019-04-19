@@ -1,0 +1,13 @@
+apiVersion: quota.openshift.io/v1
+kind: ClusterResourceQuota
+metadata:
+  name: "clusterquota-{{ _user_openshift_io_user.metadata.name }}"
+  labels:
+  user_quota_operator: true
+spec:
+  quota:
+    "{{ user_quota.resources[0].spec.quota }}|from_yaml"
+  selector:
+    annotations:
+      openshift.io/requester: "{{ _user_openshift_io_user.metadata.name }}"
+    labels: null

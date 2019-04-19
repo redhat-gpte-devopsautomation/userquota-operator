@@ -51,21 +51,7 @@
   - name: Create ClusterResourceQuota
     k8s:
       state: present
-      definition:
-        apiVersion: quota.openshift.io/v1
-        kind: ClusterResourceQuota
-        metadata:
-          name: "clusterquota-{{ _user_openshift_io_user.metadata.name }}"
-          labels:
-            user_quota_operator: true
-        spec:
-          quota:
-            "{{ user_quota.resources[0].spec.quota }}|to_yaml"
-          selector:
-            annotations:
-              openshift.io/requester: "{{ _user_openshift_io_user.metadata.name }}"
-          labels: null
-
+      definition: "{{ lookup('template', '/templates/cluster_resource_quota.j2') }}"
 
         # "    \"localhost\": {",
         # "        \"_user_openshift_io_user\": {",
@@ -109,16 +95,18 @@
         # "                        \"uid\": \"42c8afe0-62df-11e9-8777-0a45d1c86b4c\"",
         # "                    },",
         # "                    \"spec\": {",
-        # "                        \"hard\": {",
-        # "                            \"configmaps\": \"10\",",
-        # "                            \"limits.cpu\": \"10\",",
-        # "                            \"limits.memory\": \"20Gi\",",
-        # "                            \"persistentvolumeclaims\": \"20\",",
-        # "                            \"pods\": \"20\",",
-        # "                            \"requests.cpu\": \"5\",",
-        # "                            \"requests.memory\": \"6Gi\",",
-        # "                            \"requests.storage\": \"50Gi\",",
-        # "                            \"secrets\": \"150\",",
-        # "                            \"services\": \"30\"",
+        # "                        \"quota\": {",
+          # "                        \"hard\": {",
+          # "                            \"configmaps\": \"10\",",
+          # "                            \"limits.cpu\": \"10\",",
+          # "                            \"limits.memory\": \"20Gi\",",
+          # "                            \"persistentvolumeclaims\": \"20\",",
+          # "                            \"pods\": \"20\",",
+          # "                            \"requests.cpu\": \"5\",",
+          # "                            \"requests.memory\": \"6Gi\",",
+          # "                            \"requests.storage\": \"50Gi\",",
+          # "                            \"secrets\": \"150\",",
+          # "                            \"services\": \"30\"",
+          # "                        }",
         # "                        }",
         # "                    },",
