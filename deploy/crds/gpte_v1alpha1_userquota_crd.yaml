@@ -9,7 +9,6 @@ spec:
     listKind: UserQuotaList
     plural: userquota
     singular: userquota
-    shortnames: uq
   scope: Cluster
   subresources:
     status: {}
