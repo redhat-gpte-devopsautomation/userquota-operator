@@ -4,11 +4,6 @@ metadata:
   name: "clusterquota-{{ _user_openshift_io_user.metadata.name }}"
   annotations:
     applied_userquota: "{{ user_quota.resources[0].metadata.name }}"
-  ownerReferences:
-  - apiVersion: gpte.opentlc.com/v1alpha1
-    kind: UserQuota
-    name: "{{ user_quota.resources[0].metadata.name }}"
-    uid: "{{ user_quota.resources[0].metadata.uid }}"
 spec:
   selector:
     annotations:
