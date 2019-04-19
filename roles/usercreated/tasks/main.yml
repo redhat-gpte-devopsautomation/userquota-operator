@@ -51,7 +51,7 @@
   - name: Create ClusterResourceQuota
     k8s:
       state: present
-      definition: "{{ lookup('template', '/templates/cluster_resource_quota.j2') }}"
+      definition: "{{ lookup('template', './templates/cluster_resource_quota.j2') }}"
 
         # "    \"localhost\": {",
         # "        \"_user_openshift_io_user\": {",
