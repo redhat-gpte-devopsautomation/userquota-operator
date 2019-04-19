@@ -21,7 +21,7 @@ spec:
           - stdout
           # Replace this with the built image name
           image: quay.io/wkulhanek/userquota-operator:v0.0.7
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           volumeMounts:
           - mountPath: /tmp/ansible-operator/runner
             name: runner
@@ -29,7 +29,7 @@ spec:
         - name: operator
           # Replace this with the built image name
           image: quay.io/wkulhanek/userquota-operator:v0.0.7
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           volumeMounts:
           - mountPath: /tmp/ansible-operator/runner
             name: runner
