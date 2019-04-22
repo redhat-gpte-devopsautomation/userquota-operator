@@ -1,0 +1,21 @@
+- hosts: localhost
+  gather_facts: no
+  tasks:
+  # Find all ClusterResourceQuotas with annotation applied_userquota=meta.name
+  - name: Find all ClusterResourceQuotas for deleted UserQuota
+    k8s_facts:
+      api_version: quota.openshift.io/v1
+      kind: ClusterResourceQuota
+      label_selectors:
+        - applied_userquota = {{ meta.name }}
+    register:
+      quotas
+
+  - name: Delete all ClusterResourceQuotas for deleted UserQuota
+    when: quotas.resources | length > 0
+    k8s:
+      api_version: quota.openshift.io/v1
+      kind: ClusterResourceQuota
+      name: "{{ item.metadata.name }}"
+      state: absent
+    loop: "{{ quotas.resources }}"

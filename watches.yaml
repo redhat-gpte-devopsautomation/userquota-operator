@@ -3,8 +3,10 @@
   group: gpte.opentlc.com
   kind: UserQuota
   role: /opt/ansible/roles/userquota
-- version: v1
-  group: user.openshift.io
-  kind: User
-  role: /opt/ansible/roles/usercreated
-  manageStatus: false
+  reconcilePeriod: 10s
+  # Deleting the UserQuota should also delete all ClusterResourceQuotas
+  # But it doesn't so we also added a finalizer
+  watchClusterScopedResources: true
+  finalizer:
+    name: finalizer.userquota.gpte.opentlc.com
+    playbook: /opt/ansible/remove_cluster_quotas.yml
