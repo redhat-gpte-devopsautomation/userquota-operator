@@ -1,0 +1,140 @@
+= User Quota Operator
+
+== Overview
+
+This repository contains the code to build a User Quota Operator for Red Hat OpenShift Container Platform. It will not run on Kubernetes because it uses the `User` object which is unique to Red Hat OpenShift Container Platform.
+
+The Operator will look for a cluster scoped custom resource *UserQuota*. When this resource exists the operator will create a *ClusterResourceQuota* for each user that exists in OpenShift. Because the operator's reconcile loop runs every 10 seconds every newly created user will get a quota assigned within 10 seconds of the user logging into OpenShift for the first time.
+
+The operator is implemented on top of the Red Hat https://github.com/operator-framework/operator-sdk[Operator SDK] - in particular the https://github.com/operator-framework/operator-sdk/blob/master/doc/ansible/user-guide.md[Ansible Operator].
+
+== Building the Operator
+
+There is a script `build.sh` which will build the container image and push it to a container registry. If you want to build this operator yourself you will need to adjust the repository and image name - because you would not have access to the `quay.io/gpte-devops-automation` repository.
+
+If you decide to build your own also make sure to update both `image` settings in deploy/operator.yaml with the updated container image location.
+
+== Installation
+
+=== Common Installation Steps
+
+This operator requires cluster administrator permissions. Either use `system:admin` or a user id that has been granted the `cluster-admin` role. 
+
+Perform the following tasks as *cluster-admin*:
+
+. Deploy the Custom Resource Definition:
++
+[source,sh]
+----
+oc create -f https://raw.githubusercontent.com/redhat-gpte-devopsautomation/userquota-operator/master/deploy/crds/gpte_v1alpha1_userquota_crd.yaml
+----
+
+. Create the Cluster Role for the Operator:
++
+[source,sh]
+----
+oc create -f https://raw.githubusercontent.com/redhat-gpte-devopsautomation/userquota-operator/master/deploy/role.yaml
+----
+
+. Create a project for the operator to run in:
++
+[source,sh]
+----
+oc new-project userquota-operator --display-name="GPTE User Quota Operator"
+----
+
+. Deploy the *sonarqube-operator* service account (change the project name if you deployed into a different project):
++
+[source,sh]
+----
+oc create -f https://raw.githubusercontent.com/redhat-gpte-devopsautomation/userquota-operator/master/deploy/service_account.yaml -n userquota-operator
+----
+
+. Grant the *userquota-operator* role to the *userquota-operator* service account (change the project name if you deployed into a different project):
++
+[source,sh]
+----
+oc adm policy add-cluster-role-to-user userquota-operator -z userquota-operator -n userquota-operator
+----
+
+. And finally create the User Quota Operator (change the project name if you deployed into a different project):
++
+[source,sh]
+----
+oc create -f https://raw.githubusercontent.com/redhat-gpte-devopsautomation/userquota-operator/master/deploy/operator.yaml -n userquota-operator
+----
+
+. Once the Operator pod is running the Operator is ready to start reacting to the creation of *UserQuota* object called *default*.
+
+== Assigning ClusterResourceQuotas to all users using the Operator
+
+A ClusterReosurceQuota is assigned to all users by createing a Custom Resource based on the User Quota Custom Resource Definition. There is an example of a UserQuota CR at https://github.com/redhat-gpte-devopsautomation/userquota-operator/blob/master/deploy/crds/gpte_v1alpha1_userquota_cr.yaml.
+
+The UserQuota Operator understands the following settings under it's *spec* setting:
+
+* quota: This field can hold any settings that a ClusterResourceQuota could hold under its .spec.quota path. Whatever is here will be copied verbatim into the ClusterResourceQuota's .spec.quota field.
+
+[NOTE]
+Currently the name of this object *has* to be `default`.
+
+.Example
+[source,texinfo]
+----
+apiVersion: gpte.opentlc.com/v1alpha1
+kind: UserQuota
+metadata:
+  name: default
+spec:
+  quota:
+    hard:
+      configmaps: "10"
+      limits.cpu: "10"
+      limits.memory: 20Gi
+      persistentvolumeclaims: "20"
+      pods: "20"
+      requests.cpu: "5"
+      requests.memory: 6Gi
+      requests.storage: 50Gi
+      secrets: "150"
+      services: "30"
+----
+
+. Write the definition to a file (e.g. userquota.yaml) and then create the UserQuota instance:
++
+[source,sh]
+----
+oc create -f ./userquota.yaml
+----
+
+. Wait about 15 seconds and retrieving cluster resource quotas will return one cluster resource quota per user.
++
+[source,sh]
+----
+oc get clusterrresourcequota
+----
+
+== Deleting a ClusterResourceQuotas
+
+When the UserQuota object is removed from the OpenShift the operator deletes all ClusterResourceQuotas that it had created based on the User Quota object.
+
+[source,sh]
+----
+oc delete userquota default
+----
+
+== Uninstalling the User Quota Operator
+
+In case you wish to uninstall the User Quota Operator make sure that the UserQuota object `default` has been deleted. Then simply delete the project the operator is running in.
+
+[source,sh]
+----
+oc delete project userquota-operator
+----
+
+Then as *cluster-admin* delete the ClusterRole and Custom Resource:
+
+[source,sh]
+----
+oc delete clusterrole userquota-operator
+oc delete crd userquota.gpte.opentlc.com
+----
