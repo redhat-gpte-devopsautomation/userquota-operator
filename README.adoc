@@ -18,7 +18,7 @@ If you decide to build your own also make sure to update both `image` settings i
 
 === Common Installation Steps
 
-This operator requires cluster administrator permissions. Either use `system:admin` or a user id that has been granted the `cluster-admin` role. 
+Installing this operator requires cluster administrator permissions. Either use `system:admin` or a user id that has been granted the `cluster-admin` role. 
 
 Perform the following tasks as *cluster-admin*:
 
@@ -40,10 +40,10 @@ oc create -f https://raw.githubusercontent.com/redhat-gpte-devopsautomation/user
 +
 [source,sh]
 ----
-oc new-project userquota-operator --display-name="GPTE User Quota Operator"
+oc new-project gpte-userquota-operator --display-name="GPTE User Quota Operator"
 ----
 
-. Deploy the *sonarqube-operator* service account (change the project name if you deployed into a different project):
+. Deploy the *project-cleanup-operator* service account (change the project name if you deployed into a different project):
 +
 [source,sh]
 ----
