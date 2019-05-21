@@ -40,7 +40,7 @@ oc create -f https://raw.githubusercontent.com/redhat-gpte-devopsautomation/user
 +
 [source,sh]
 ----
-oc new-project gpte-userquota-operator --display-name="GPTE User Quota Operator"
+oc new-project userquota-operator --display-name="GPTE User Quota Operator"
 ----
 
 . Deploy the *userquota-operator* service account (change the project name if you deployed into a different project):
