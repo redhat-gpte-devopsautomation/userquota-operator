@@ -16,7 +16,7 @@
   
 - name: Log UserQuota event
   debug:
-    msg: "UserQuota created: {{ quota }}"
+    msg: "UserQuota created: {{ default.quota }}"
 
 # Find all Users and create a ClusterResourceQuota for them
 - name: Find all users
@@ -26,9 +26,10 @@
   register:
     users
 
-- name: Create ClusterResourceQuota for Users
+- name: Create Default ClusterResourceQuota for Non-Excluded Users
   when:
     - users.resources | length > 0
+    - exceptions is not defined or item.metadata.name not in exceptions
   k8s:
     state: present
     definition: "{{ lookup('template', './templates/cluster_resource_quota.j2') }}"

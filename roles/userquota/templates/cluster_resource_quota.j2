@@ -10,4 +10,4 @@ spec:
       openshift.io/requester: "{{ item.metadata.name }}"
     labels: null
   quota:
-    {{ quota|to_yaml }}
+    {{ default.quota|to_yaml }}
