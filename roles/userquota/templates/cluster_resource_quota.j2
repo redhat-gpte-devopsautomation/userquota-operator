@@ -1,7 +1,7 @@
 apiVersion: quota.openshift.io/v1
 kind: ClusterResourceQuota
 metadata:
-  name: "clusterquota-{{ item.metadata.name }}"
+  name: "clusterquota-{{ item.metadata.name | regex_replace('(.+?)@.*', '\\1') }}"
   labels:
     applied_userquota: "{{ meta.name }}"
 spec:
