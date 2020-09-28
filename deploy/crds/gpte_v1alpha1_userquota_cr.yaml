@@ -3,15 +3,19 @@ kind: UserQuota
 metadata:
   name: default
 spec:
-  quota:
-    hard:
-      configmaps: "10"
-      limits.cpu: "10"
-      limits.memory: 20Gi
-      persistentvolumeclaims: "20"
-      pods: "20"
-      requests.cpu: "5"
-      requests.memory: 6Gi
-      requests.storage: 50Gi
-      secrets: "150"
-      services: "30"
+  default:
+    quota:
+      hard:
+        configmaps: "10"
+        limits.cpu: "10"
+        limits.memory: 20Gi
+        persistentvolumeclaims: "20"
+        pods: "20"
+        requests.cpu: "5"
+        requests.memory: 6Gi
+        requests.storage: 50Gi
+        secrets: "150"
+        services: "30"
+  exceptions:
+    - favorite_user
+    - awesome_user
